@@ -32,3 +32,25 @@ func (s *ProductService) Update(product *models.Product) error {
 func (s *ProductService) Delete(id int) error {
 	return s.repo.Delete(id)
 }
+
+// ? ============================================ Category ============================================
+
+func (s *ProductService) GetAllCategory() ([]models.Category, error) {
+	return s.repo.GetAllCategory()
+}
+
+func (s *ProductService) CreateCategory(data *models.Category) error {
+	return s.repo.CreateCategory(data)
+}
+
+func (s *ProductService) GetByIDCategory(id int) (*models.Category, error) {
+	return s.repo.GetByIDCategory(id)
+}
+
+func (s *ProductService) UpdateCategory(category *models.Category) error {
+	return s.repo.UpdateCategory(category)
+}
+
+func (s *ProductService) DeleteCategory(id int) error {
+	return s.repo.DeleteCategory(id)
+}

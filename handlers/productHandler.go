@@ -29,6 +29,7 @@ func (h *ProductHandler) HandleProducts(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// ! ambil produk
 func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	products, err := h.service.GetAll()
 	if err != nil {
@@ -40,6 +41,7 @@ func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(products)
 }
 
+// ! input produk
 func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
@@ -47,6 +49,8 @@ func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+
+	product.CategoryID = product.Category.ID
 
 	err = h.service.Create(&product)
 	if err != nil {
@@ -73,7 +77,7 @@ func (h *ProductHandler) HandleProductByID(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// ? GetByID - GET /api/produk/{id}
+// ! GetByID - GET /api/produk/{id}
 func (h *ProductHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 	id, err := strconv.Atoi(idStr)
@@ -92,6 +96,7 @@ func (h *ProductHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
+// ! Update - Update /api/produk/{id}
 func (h *ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 	id, err := strconv.Atoi(idStr)
@@ -108,22 +113,23 @@ func (h *ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	product.ID = id
+	product.CategoryID = product.Category.ID
 	err = h.service.Update(&product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(product)
 }
 
-// ? Delete - DELETE /api/produk/{id}
+// ! Delete - DELETE /api/produk/{id}
 func (h *ProductHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid product ID", http.StatusBadRequest)
+		http.Error(w, "Invalid product ID" , http.StatusBadRequest)
 		return
 	}
 
@@ -135,6 +141,6 @@ func (h *ProductHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Product deleted successfully",
+		"message": "Product ID : " + strconv.Itoa(id)  + " deleted successfully",
 	})
 }

@@ -45,10 +45,13 @@ func main() {
 	productRepo := repositories.NewProductRepository(db)
 	productService := services.NewProductService(productRepo)
 	productHandler := handlers.NewProductHandler(productService)
+	categoryHandler := handlers.NewCategoryHandler(productService)
 
 	// ! Setup routes
 	http.HandleFunc("/api/produk", productHandler.HandleProducts)
+	http.HandleFunc("/api/category", categoryHandler.HandleCategory)
 	http.HandleFunc("/api/produk/", productHandler.HandleProductByID)
+	http.HandleFunc("/api/category/", categoryHandler.HandleCategoryByID)
 
 	// localhost:8080/health
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
