@@ -15,9 +15,16 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 }
 
 // ! ambil semua isi product dengan relasi kategori
-func (repo *ProductRepository) GetAll() ([]models.Product, error) {
-	query := "SELECT p.id, p.name, p.price, p.stock, COALESCE(p.category_id, 0), COALESCE(c.id, 0), COALESCE(c.name, '') FROM product p LEFT JOIN category_product c ON p.category_id = c.id ORDER BY p.id ASC"
-	rows, err := repo.db.Query(query)
+func (repo *ProductRepository) GetAll(name string) ([]models.Product, error) {
+	query := "SELECT p.id, p.name, p.price, p.stock, COALESCE(p.category_id, 0), COALESCE(c.id, 0), COALESCE(c.name, '') FROM product p LEFT JOIN category_product c ON p.category_id = c.id"
+	
+	var args [] interface{}
+	if name != "" {
+		query += " WHERE p.name ILIKE $1 ORDER BY p.id ASC"
+		args = append(args, "%" + name + "%")
+	}
+	
+	rows, err := repo.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
